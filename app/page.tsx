@@ -1,18 +1,10 @@
-import { revalidatePath } from "next/cache";
 import Image from "next/image";
+import { addItem } from "./actions";
+import { ListItem } from "./listItem";
 
 let items = ["Oranges", "Minced Meat", "Milk", "Kiwis"];
 
 export default function Home() {
-  async function addItem(data: FormData) {
-    "use server";
-
-    const item = data.get("item") as string;
-    items.push(item);
-
-    revalidatePath("/");
-  }
-
   return (
     <form
       action={addItem}
@@ -36,16 +28,14 @@ export default function Home() {
       >
         Add to cart
       </button>
-      <ul className="flex gap-4 flex-wrap">
+      <div className="flex gap-4 flex-wrap">
         {items.map((item, index) => (
-          <li
+          <ListItem
+            item={item}
             key={index}
-            className="bg-stone-100 rounded-lg p-4 text-center grow shadow-md"
-          >
-            {item}
-          </li>
+          />
         ))}
-      </ul>
+      </div>
     </form>
   );
 }
