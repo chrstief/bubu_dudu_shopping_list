@@ -1,11 +1,20 @@
 import Image from "next/image";
-import { addItem } from "./actions";
 import { ListItem } from "./listItem";
 import heroImage from "./assets/aac829889e740dbeece2cf04649f2a46-fotor-bg-remover-20230506134539.png";
+import db from "./items"
+import { revalidatePath } from "next/cache";
 
-let items = ["Oranges", "Minced Meat", "Milk", "Kiwis"];
+async function addItem(data: FormData) {
+  "use server";
+  const item = data.get("item") as string;
+  db.addItem(item);
+  revalidatePath("/");
+}
 
 export default function Home() {
+
+  let items = db.getItems();
+
   return (
     <form
       action={addItem}
