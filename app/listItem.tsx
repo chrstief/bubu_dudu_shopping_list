@@ -1,19 +1,19 @@
-import db from "./items";
-import { revalidatePath } from "next/cache";
+"use client";
+import { useTransition } from "react";
+import { removeItem } from "./actions";
 
 export function ListItem({ item }: { item: string }) {
-
-  async function removeItem() {
-    "use server"
-    db.removeItem(item)
-    console.log(db.getItems());
-    revalidatePath("/");
-  }
+  let [pending, startTransition] = useTransition();
 
   return (
     <button
-      formAction={removeItem}
-      className="bg-stone-100 hover:bg-amber-100 rounded-lg p-4 text-center grow shadow-md"
+      disabled={pending}
+      className="bg-stone-100 disabled:animate-pulse hover:bg-amber-100 rounded-lg p-4 text-center grow shadow-md"
+      onClick={() => {
+        startTransition(() => {
+          removeItem(item);
+        });
+      }}
     >
       {item}
     </button>
