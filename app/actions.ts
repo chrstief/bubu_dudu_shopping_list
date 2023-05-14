@@ -1,15 +1,15 @@
 "use server";
-import db from "./items";
+import { kv } from "@vercel/kv";
 import { revalidatePath } from "next/cache";
 
 export async function addItem(item: string) {
   if (item) {
-    db.addItem(item);
+    await kv.sadd("shoppingList", item);
     revalidatePath("/");
   }
 }
 
 export async function removeItem(item: string) {
-  db.removeItem(item);
+  await kv.srem("shoppingList", item);
   revalidatePath("/");
 }
