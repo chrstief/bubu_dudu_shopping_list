@@ -1,18 +1,19 @@
 import Image from "next/image";
 import { ListItem } from "./listItem";
 import heroImage from "./assets/aac829889e740dbeece2cf04649f2a46-fotor-bg-remover-20230506134539.png";
-import db from "./items"
+import db from "./items";
 import { revalidatePath } from "next/cache";
 
 async function addItem(data: FormData) {
   "use server";
   const item = data.get("item") as string;
-  db.addItem(item);
-  revalidatePath("/");
+  if (item) {
+    db.addItem(item);
+    revalidatePath("/");
+  }
 }
 
 export default function Home() {
-
   let items = db.getItems();
 
   return (
