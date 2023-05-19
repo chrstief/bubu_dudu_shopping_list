@@ -13,3 +13,7 @@ export async function removeItem(item: string) {
   await kv.srem("shoppingList", item);
   revalidatePath("/");
 }
+
+export async function refetchItems() {
+  revalidatePath("/");
+}

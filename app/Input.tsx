@@ -1,10 +1,17 @@
 "use client";
-import { useState, useTransition } from "react";
-import { addItem } from "./actions";
+import { useState, useTransition, useEffect } from "react";
+import { addItem, refetchItems } from "./actions";
 
 export default function Input() {
   const [inputValue, setInputValue] = useState("");
   let [pending, startTransition] = useTransition();
+
+  useEffect(() => {
+    const intervalId = setInterval(refetchItems, 5000);
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
 
   function submit() {
     if (inputValue) {
