@@ -14,7 +14,7 @@ export default async function Home() {
       <Image src={heroImage} alt="" width="300" height="300" />
       <Input />
       <div className="flex gap-4 flex-wrap">
-        {items.map((item, index) => (
+        {items.sort().map((item, index) => (
           <ListItem item={item} key={index} />
         ))}
       </div>
