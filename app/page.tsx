@@ -4,8 +4,6 @@ import heroImage from "./assets/aac829889e740dbeece2cf04649f2a46-fotor-bg-remove
 import { kv } from "@vercel/kv";
 import Input from "./Input";
 
-
-
 export default async function Home() {
   const items = await kv.smembers("shoppingList");
 
