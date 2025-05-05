@@ -17,7 +17,3 @@ export async function removeItem(formData: FormData) {
     revalidatePath("/");
   }
 }
-
-export async function refetchItems() {
-  revalidatePath("/");
-}
