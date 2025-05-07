@@ -5,8 +5,9 @@ import { Items } from "./items";
 import { Polling } from "./Polling";
 
 export default async function Home() {
-  const items = await kv.smembers("shoppingList");
-
+  const items = (await kv.smembers("shoppingList"))
+    .map(String)
+    .toSorted((a, b) => a.localeCompare(b));
   return (
     <div className="flex flex-col gap-4 items-center max-w-sm mx-auto my-14 px-4">
       <Image src={heroImage} alt="" width="300" height="300" />

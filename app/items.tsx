@@ -1,15 +1,18 @@
 "use client";
-import { useOptimistic, useState } from "react";
+import { useOptimistic, useState, useTransition } from "react";
 import { addItem, removeItem } from "./actions";
 
 export function Items({ items }: { items: string[] }) {
   const [inputValue, setInputValue] = useState("");
+  const [, startTransition] = useTransition();
   const [optimisticItems, updateOptimisticItems] = useOptimistic(
     items,
     (previous, action: { payload: string; type: "add" | "delete" }) => {
       switch (action.type) {
         case "add":
-          return [...previous, action.payload];
+          return [...previous, action.payload].toSorted((a, b) =>
+            a.localeCompare(b),
+          );
         case "delete":
           return previous.filter((item) => item !== action.payload);
       }
@@ -18,9 +21,11 @@ export function Items({ items }: { items: string[] }) {
 
   function handleSubmit() {
     if (inputValue) {
-      updateOptimisticItems({ payload: inputValue, type: "add" });
-      setInputValue("");
-      addItem(inputValue);
+      startTransition(() => {
+        updateOptimisticItems({ payload: inputValue, type: "add" });
+        setInputValue("");
+        addItem(inputValue);
+      });
     }
   }
 
@@ -45,20 +50,20 @@ export function Items({ items }: { items: string[] }) {
         Add to cart
       </button>
       <div className="flex gap-4 flex-wrap">
-        {optimisticItems
-          .toSorted((a, b) => a.localeCompare(b))
-          .map((item, index) => (
-            <button
-              key={index}
-              className="bg-stone-100 hover:bg-amber-100 rounded-lg p-4 text-center grow shadow-md"
-              onClick={() => {
+        {optimisticItems.map((item, index) => (
+          <button
+            key={index}
+            className="bg-stone-100 hover:bg-amber-100 rounded-lg p-4 text-center grow shadow-md"
+            onClick={() => {
+              startTransition(() => {
                 updateOptimisticItems({ payload: item, type: "delete" });
                 removeItem(item);
-              }}
-            >
-              {item}
-            </button>
-          ))}
+              });
+            }}
+          >
+            {item}
+          </button>
+        ))}
       </div>
     </>
   );
