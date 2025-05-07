@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    theme_color: "rgb(229 231 235)",
-    background_color: "rgb(229 231 235)",
+    theme_color: "oklch(93.37% 0.0339 12.05)",
+    background_color: "oklch(93.37% 0.0339 12.05)",
     display: "standalone",
     start_url: "/",
     name: "Bubu Dudu Shopping List",
@@ -32,4 +32,3 @@ export default function manifest(): MetadataRoute.Manifest {
     ],
   };
 }
-

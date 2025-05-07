@@ -1,6 +1,93 @@
 "use client";
 import { useOptimistic, useState, useTransition } from "react";
 import { addItem, removeItem } from "./actions";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+
+const foodEmojis = [
+  "🍎",
+  "🍏",
+  "🍊",
+  "🍋",
+  "🍌",
+  "🍉",
+  "🍇",
+  "🍓",
+  "🫐",
+  "🍈",
+  "🍒",
+  "🍑",
+  "🥭",
+  "🍍",
+  "🥥",
+  "🥝",
+  "🍅",
+  "🫒",
+  "🥑",
+  "🍆",
+  "🥔",
+  "🥕",
+  "🌽",
+  "🌶️",
+  "🫑",
+  "🥒",
+  "🥬",
+  "🧄",
+  "🧅",
+  "🥦",
+  "🥗",
+  "🍞",
+  "🥐",
+  "🥖",
+  "🥨",
+  "🧀",
+  "🥯",
+  "🥞",
+  "🧇",
+  "🍩",
+  "🍪",
+  "🎂",
+  "🍰",
+  "🧁",
+  "🍖",
+  "🍗",
+  "🥩",
+  "🥓",
+  "🍔",
+  "🍟",
+  "🍕",
+  "🌭",
+  "🥪",
+  "🌮",
+  "🌯",
+  "🥙",
+  "🧆",
+  "🥚",
+  "🍳",
+  "🥘",
+  "🍲",
+  "🫕",
+  "🍝",
+  "🍜",
+  "🍛",
+  "🍚",
+  "🍘",
+  "🍙",
+  "🍢",
+  "🥫",
+  "🧂",
+  "🧈",
+  "🍿",
+  "🥟",
+  "🥠",
+  "🥡",
+  "🍦",
+  "🍧",
+  "🍨",
+  "🍫",
+  "🍬",
+  "🍭",
+];
 
 export function Items({ items }: { items: string[] }) {
   const [inputValue, setInputValue] = useState("");
@@ -31,10 +118,10 @@ export function Items({ items }: { items: string[] }) {
 
   return (
     <>
-      <input
+      <Input
         type="text"
-        placeholder="Bread"
-        className="bg-gray-300 text-gray-700 rounded-lg p-4 w-full text-center"
+        placeholder={foodEmojis[Math.floor(Math.random() * foodEmojis.length)]}
+        className="w-full text-center placeholder:text-xl placeholder:text-black"
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
         onKeyDown={(e) => {
@@ -43,17 +130,16 @@ export function Items({ items }: { items: string[] }) {
           }
         }}
       />
-      <button
-        className="bg-rose-800 text-gray-100 rounded-lg p-4 w-full"
-        onClick={handleSubmit}
-      >
+      <Button size="xl" className="w-full" onClick={handleSubmit}>
         Add to cart
-      </button>
-      <div className="flex gap-4 flex-wrap">
+      </Button>
+      <div className="flex gap-5 flex-wrap">
         {optimisticItems.map((item, index) => (
-          <button
+          <Button
             key={index}
-            className="bg-stone-100 hover:bg-amber-100 rounded-lg p-4 text-center grow shadow-md"
+            className="grow"
+            variant="neutral"
+            size="xl"
             onClick={() => {
               startTransition(() => {
                 updateOptimisticItems({ payload: item, type: "delete" });
@@ -62,7 +148,7 @@ export function Items({ items }: { items: string[] }) {
             }}
           >
             {item}
-          </button>
+          </Button>
         ))}
       </div>
     </>

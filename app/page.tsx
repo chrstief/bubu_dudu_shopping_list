@@ -9,7 +9,7 @@ export default async function Home() {
     .map(String)
     .toSorted((a, b) => a.localeCompare(b));
   return (
-    <div className="flex flex-col gap-4 items-center max-w-sm mx-auto my-14 px-4">
+    <div className="flex flex-col gap-5 items-center max-w-sm mx-auto my-14 px-4">
       <Image src={heroImage} alt="" width="300" height="300" />
       <Items items={items} />
       <Polling />
