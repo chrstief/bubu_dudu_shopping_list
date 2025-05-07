@@ -45,18 +45,20 @@ export function Items({ items }: { items: string[] }) {
         Add to cart
       </button>
       <div className="flex gap-4 flex-wrap">
-        {optimisticItems.sort().map((item, index) => (
-          <button
-            key={index}
-            className="bg-stone-100 hover:bg-amber-100 rounded-lg p-4 text-center grow shadow-md"
-            onClick={() => {
-              updateOptimisticItems({ payload: item, type: "delete" });
-              removeItem(item);
-            }}
-          >
-            {item}
-          </button>
-        ))}
+        {optimisticItems
+          .toSorted((a, b) => a.localeCompare(b))
+          .map((item, index) => (
+            <button
+              key={index}
+              className="bg-stone-100 hover:bg-amber-100 rounded-lg p-4 text-center grow shadow-md"
+              onClick={() => {
+                updateOptimisticItems({ payload: item, type: "delete" });
+                removeItem(item);
+              }}
+            >
+              {item}
+            </button>
+          ))}
       </div>
     </>
   );
