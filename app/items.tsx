@@ -107,32 +107,38 @@ export function Items({ items }: { items: string[] }) {
   );
 
   function handleSubmit() {
-    if (inputValue) {
-      startTransition(() => {
-        updateOptimisticItems({ payload: inputValue, type: "add" });
-        setInputValue("");
-        addItem(inputValue);
-      });
-    }
+    const value = inputValue.trim();
+    if (!value) return;
+
+    setInputValue("");
+    startTransition(() => {
+      updateOptimisticItems({ payload: value, type: "add" });
+      addItem(value);
+    });
   }
 
   return (
     <>
-      <Input
-        type="text"
-        placeholder={foodEmojis[Math.floor(Math.random() * foodEmojis.length)]}
-        className="w-full text-center placeholder:text-xl placeholder:text-black"
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            handleSubmit();
-          }
+      <form
+        className="w-full flex flex-col gap-5"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
         }}
-      />
-      <Button size="xl" className="w-full" onClick={handleSubmit}>
-        Add to cart
-      </Button>
+      >
+        <Input
+          type="text"
+          placeholder={
+            foodEmojis[Math.floor(Math.random() * foodEmojis.length)]
+          }
+          className="w-full text-center placeholder:text-xl placeholder:text-black"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+        />
+        <Button type="submit" size="xl" className="w-full">
+          Add to cart
+        </Button>
+      </form>
       <div className="flex gap-5 flex-wrap">
         {optimisticItems.map((item, index) => (
           <Button
