@@ -1,11 +1,11 @@
 import Image from "next/image";
 import heroImage from "./assets/aac829889e740dbeece2cf04649f2a46-fotor-bg-remover-20230506134539.png";
-import { kv } from "@vercel/kv";
+import { redis } from "@/lib/redis";
 import { Items } from "./items";
 import { Polling } from "./Polling";
 
 export default async function Home() {
-  const items = (await kv.smembers("shoppingList"))
+  const items = (await redis.smembers("shoppingList"))
     .map(String)
     .toSorted((a, b) => a.localeCompare(b));
   return (
