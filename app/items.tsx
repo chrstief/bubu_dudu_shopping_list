@@ -131,7 +131,7 @@ export function Items({ items }: { items: string[] }) {
           placeholder={
             foodEmojis[Math.floor(Math.random() * foodEmojis.length)]
           }
-          className="w-full text-center placeholder:text-xl placeholder:text-black"
+          className="w-full text-center placeholder:text-xl focus:placeholder:text-transparent"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
         />
