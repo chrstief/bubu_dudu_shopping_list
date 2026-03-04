@@ -97,6 +97,9 @@ export function Items({ items }: { items: string[] }) {
     (previous, action: { payload: string; type: "add" | "delete" }) => {
       switch (action.type) {
         case "add":
+          if (previous.includes(action.payload)) {
+            return previous;
+          }
           return [...previous, action.payload].toSorted((a, b) =>
             a.localeCompare(b),
           );
@@ -140,9 +143,9 @@ export function Items({ items }: { items: string[] }) {
         </Button>
       </form>
       <div className="flex gap-5 flex-wrap">
-        {optimisticItems.map((item, index) => (
+        {optimisticItems.map((item) => (
           <Button
-            key={index}
+            key={item}
             className="grow"
             variant="neutral"
             size="xl"
