@@ -1,5 +1,5 @@
 "use client";
-import { useOptimistic, useState, useTransition } from "react";
+import { useEffect, useOptimistic, useState, useTransition } from "react";
 import { addItem, removeItem } from "./actions";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -89,11 +89,23 @@ const foodEmojis = [
   "🍭",
 ];
 
+function getRandomEmoji() {
+  return foodEmojis[Math.floor(Math.random() * foodEmojis.length)];
+}
+
+function getRandomEmojiDifferentFrom(currentEmoji: string) {
+  if (foodEmojis.length <= 1) return currentEmoji;
+
+  let nextEmoji = getRandomEmoji();
+  while (nextEmoji === currentEmoji) {
+    nextEmoji = getRandomEmoji();
+  }
+  return nextEmoji;
+}
+
 export function Items({ items }: { items: string[] }) {
   const [inputValue, setInputValue] = useState("");
-  const [placeholderEmoji] = useState(
-    () => foodEmojis[Math.floor(Math.random() * foodEmojis.length)],
-  );
+  const [placeholderEmoji, setPlaceholderEmoji] = useState(() => getRandomEmoji());
   const [, startTransition] = useTransition();
   const [optimisticItems, updateOptimisticItems] = useOptimistic(
     items,
@@ -111,6 +123,16 @@ export function Items({ items }: { items: string[] }) {
       }
     },
   );
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setPlaceholderEmoji((currentEmoji) =>
+        getRandomEmojiDifferentFrom(currentEmoji),
+      );
+    }, 2000);
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   function handleSubmit() {
     const value = inputValue.trim();
