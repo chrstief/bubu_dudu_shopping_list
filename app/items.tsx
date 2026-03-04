@@ -1,10 +1,11 @@
 "use client";
-import { useOptimistic, useState, useTransition } from "react";
+import { useEffect, useOptimistic, useState, useTransition } from "react";
 import { addItem, removeItem } from "./actions";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 const foodEmojis = [
+  "🥝",
   "🍎",
   "🍏",
   "🍊",
@@ -20,7 +21,6 @@ const foodEmojis = [
   "🥭",
   "🍍",
   "🥥",
-  "🥝",
   "🍅",
   "🫒",
   "🥑",
@@ -89,8 +89,13 @@ const foodEmojis = [
   "🍭",
 ];
 
+function getRandomEmoji() {
+  return foodEmojis[Math.floor(Math.random() * foodEmojis.length)];
+}
+
 export function Items({ items }: { items: string[] }) {
   const [inputValue, setInputValue] = useState("");
+  const [placeholderEmoji, setPlaceholderEmoji] = useState(foodEmojis[0]);
   const [, startTransition] = useTransition();
   const [optimisticItems, updateOptimisticItems] = useOptimistic(
     items,
@@ -108,6 +113,14 @@ export function Items({ items }: { items: string[] }) {
       }
     },
   );
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setPlaceholderEmoji(getRandomEmoji());
+    }, 900);
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   function handleSubmit() {
     const value = inputValue.trim();
@@ -131,9 +144,7 @@ export function Items({ items }: { items: string[] }) {
       >
         <Input
           type="text"
-          placeholder={
-            foodEmojis[Math.floor(Math.random() * foodEmojis.length)]
-          }
+          placeholder={placeholderEmoji}
           className="w-full text-center placeholder:text-xl focus:placeholder:text-transparent"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
