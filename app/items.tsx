@@ -91,6 +91,9 @@ const foodEmojis = [
 
 export function Items({ items }: { items: string[] }) {
   const [inputValue, setInputValue] = useState("");
+  const [placeholderEmoji] = useState(
+    () => foodEmojis[Math.floor(Math.random() * foodEmojis.length)],
+  );
   const [, startTransition] = useTransition();
   const [optimisticItems, updateOptimisticItems] = useOptimistic(
     items,
@@ -131,9 +134,7 @@ export function Items({ items }: { items: string[] }) {
       >
         <Input
           type="text"
-          placeholder={
-            foodEmojis[Math.floor(Math.random() * foodEmojis.length)]
-          }
+          placeholder={placeholderEmoji}
           className="w-full text-center placeholder:text-xl focus:placeholder:text-transparent"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
