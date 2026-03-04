@@ -93,19 +93,9 @@ function getRandomEmoji() {
   return foodEmojis[Math.floor(Math.random() * foodEmojis.length)];
 }
 
-function getRandomEmojiDifferentFrom(currentEmoji: string) {
-  if (foodEmojis.length <= 1) return currentEmoji;
-
-  let nextEmoji = getRandomEmoji();
-  while (nextEmoji === currentEmoji) {
-    nextEmoji = getRandomEmoji();
-  }
-  return nextEmoji;
-}
-
 export function Items({ items }: { items: string[] }) {
   const [inputValue, setInputValue] = useState("");
-  const [placeholderEmoji, setPlaceholderEmoji] = useState(() => getRandomEmoji());
+  const [placeholderEmoji, setPlaceholderEmoji] = useState(getRandomEmoji);
   const [, startTransition] = useTransition();
   const [optimisticItems, updateOptimisticItems] = useOptimistic(
     items,
@@ -126,10 +116,8 @@ export function Items({ items }: { items: string[] }) {
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setPlaceholderEmoji((currentEmoji) =>
-        getRandomEmojiDifferentFrom(currentEmoji),
-      );
-    }, 2000);
+      setPlaceholderEmoji(getRandomEmoji());
+    }, 1000);
 
     return () => clearInterval(intervalId);
   }, []);
