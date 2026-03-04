@@ -95,7 +95,7 @@ function getRandomEmoji() {
 
 export function Items({ items }: { items: string[] }) {
   const [inputValue, setInputValue] = useState("");
-  const [placeholderEmoji, setPlaceholderEmoji] = useState(getRandomEmoji);
+  const [placeholderEmoji, setPlaceholderEmoji] = useState(foodEmojis[0]);
   const [, startTransition] = useTransition();
   const [optimisticItems, updateOptimisticItems] = useOptimistic(
     items,
@@ -117,7 +117,7 @@ export function Items({ items }: { items: string[] }) {
   useEffect(() => {
     const intervalId = setInterval(() => {
       setPlaceholderEmoji(getRandomEmoji());
-    }, 1000);
+    }, 900);
 
     return () => clearInterval(intervalId);
   }, []);
