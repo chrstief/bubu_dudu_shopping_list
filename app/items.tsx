@@ -40,6 +40,10 @@ export function Items({ items }: { items: string[] }) {
     const value = inputValue.trim();
     if (!value) return;
 
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+
     setInputValue("");
     startTransition(() => {
       updateOptimisticItems({ payload: value, type: "add" });
