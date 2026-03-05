@@ -3,6 +3,7 @@ import { useEffect, useOptimistic, useState, useTransition } from "react";
 import { addItem, removeItem } from "./actions";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useWebHaptics } from "web-haptics/react";
 
 const foodEmojis = [
   "🥝",
@@ -96,6 +97,7 @@ function getRandomEmoji() {
 export function Items({ items }: { items: string[] }) {
   const [inputValue, setInputValue] = useState("");
   const [placeholderEmoji, setPlaceholderEmoji] = useState(foodEmojis[0]);
+  const { trigger } = useWebHaptics();
   const [, startTransition] = useTransition();
   const [optimisticItems, updateOptimisticItems] = useOptimistic(
     items,
@@ -161,6 +163,7 @@ export function Items({ items }: { items: string[] }) {
             variant="neutral"
             size="xl"
             onClick={() => {
+              trigger();
               startTransition(() => {
                 updateOptimisticItems({ payload: item, type: "delete" });
                 removeItem(item);
