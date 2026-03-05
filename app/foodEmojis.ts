@@ -81,7 +81,7 @@ export const foodEmojis = [
   "🍫",
   "🍬",
   "🍭",
-] as const;
+];
 
 export function getRandomFoodEmoji() {
   return foodEmojis[Math.floor(Math.random() * foodEmojis.length)];
