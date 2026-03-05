@@ -9,7 +9,7 @@ export function Polling() {
       refetchItems();
     }, 5000);
     return () => clearInterval(interval);
-  }, [refetchItems]);
+  }, []);
 
   return null;
 }
