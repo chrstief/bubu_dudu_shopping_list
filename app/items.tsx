@@ -4,95 +4,7 @@ import { addItem, removeItem } from "./actions";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useWebHaptics } from "web-haptics/react";
-
-const foodEmojis = [
-  "🥝",
-  "🍎",
-  "🍏",
-  "🍊",
-  "🍋",
-  "🍌",
-  "🍉",
-  "🍇",
-  "🍓",
-  "🫐",
-  "🍈",
-  "🍒",
-  "🍑",
-  "🥭",
-  "🍍",
-  "🥥",
-  "🍅",
-  "🫒",
-  "🥑",
-  "🍆",
-  "🥔",
-  "🥕",
-  "🌽",
-  "🌶️",
-  "🫑",
-  "🥒",
-  "🥬",
-  "🧄",
-  "🧅",
-  "🥦",
-  "🥗",
-  "🍞",
-  "🥐",
-  "🥖",
-  "🥨",
-  "🧀",
-  "🥯",
-  "🥞",
-  "🧇",
-  "🍩",
-  "🍪",
-  "🎂",
-  "🍰",
-  "🧁",
-  "🍖",
-  "🍗",
-  "🥩",
-  "🥓",
-  "🍔",
-  "🍟",
-  "🍕",
-  "🌭",
-  "🥪",
-  "🌮",
-  "🌯",
-  "🥙",
-  "🧆",
-  "🥚",
-  "🍳",
-  "🥘",
-  "🍲",
-  "🫕",
-  "🍝",
-  "🍜",
-  "🍛",
-  "🍚",
-  "🍘",
-  "🍙",
-  "🍢",
-  "🥫",
-  "🧂",
-  "🧈",
-  "🍿",
-  "🥟",
-  "🥠",
-  "🥡",
-  "🍦",
-  "🍧",
-  "🍨",
-  "🍫",
-  "🍬",
-  "🍭",
-];
-
-function getRandomEmoji() {
-  return foodEmojis[Math.floor(Math.random() * foodEmojis.length)];
-}
+import { foodEmojis, getRandomFoodEmoji } from "./foodEmojis";
 
 export function Items({ items }: { items: string[] }) {
   const [inputValue, setInputValue] = useState("");
@@ -118,7 +30,7 @@ export function Items({ items }: { items: string[] }) {
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setPlaceholderEmoji(getRandomEmoji());
+      setPlaceholderEmoji(getRandomFoodEmoji());
     }, 900);
 
     return () => clearInterval(intervalId);
