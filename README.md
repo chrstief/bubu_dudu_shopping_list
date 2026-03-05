@@ -1,6 +1,6 @@
 # Bubu Dudu Shopping List
 
-A shared shopping list built with Next.js App Router, React 19, and Upstash Redis.
+A shared shopping list built with Next.js and Upstash Redis.
 
 ## Features
 
@@ -11,28 +11,14 @@ A shared shopping list built with Next.js App Router, React 19, and Upstash Redi
 
 ## Tech Stack
 
-- Next.js 16 (App Router)
-- React 19
-- TypeScript
-- Tailwind CSS v4 + shadcn/ui components
+- Next.js
+- Component Library https://github.com/ekmas/neobrutalism-components
 - Upstash Redis (`@upstash/redis`)
+- haptic feedback https://github.com/lochie/web-haptics
 
 ## Prerequisites
 
-- Node.js 20+
-- npm
 - Upstash Redis database
-
-## Environment Variables
-
-Create a `.env.local` file in the project root:
-
-```bash
-UPSTASH_REDIS_REST_URL=your_upstash_redis_rest_url
-UPSTASH_REDIS_REST_TOKEN=your_upstash_redis_rest_token
-```
-
-`lib/redis.ts` uses `Redis.fromEnv()`, so both variables are required for local and deployed environments.
 
 ## Local Development
 
@@ -42,20 +28,28 @@ Install dependencies:
 npm install
 ```
 
+Set up environment variables:
+
+If your project is deployed on Vercel, you can pull the env vars with `vercel-cli` instead of copying them manually:
+
+```bash
+vercel login
+vercel link
+vercel env pull .env.local --environment=development
+```
+
+Otherwise, create a `.env.local` file in the project root:
+
+```bash
+UPSTASH_REDIS_REST_URL=your_upstash_redis_rest_url
+UPSTASH_REDIS_REST_TOKEN=your_upstash_redis_rest_token
+```
+
 Run the development server:
 
 ```bash
 npm run dev
 ```
-
-Open `http://localhost:3000`.
-
-## Scripts
-
-- `npm run dev` - start local dev server
-- `npm run build` - production build
-- `npm run start` - run production server
-- `npm run lint` - run ESLint
 
 ## Architecture Notes
 
@@ -72,7 +66,3 @@ The shopping list is stored as a Redis set under key `shoppingList`:
 
 - Duplicates are prevented by set semantics
 - Items are sorted alphabetically in the UI before render
-
-## Deployment
-
-Deploy on any platform that supports Next.js and environment variables. Ensure the two Upstash Redis env vars are configured in the deployment target.
