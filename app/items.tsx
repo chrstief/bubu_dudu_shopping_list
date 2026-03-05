@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useWebHaptics } from "web-haptics/react";
 import { foodEmojis, getRandomFoodEmoji } from "./foodEmojis";
+import { isValidNormalizedItem, normalizeItemInput } from "@/lib/itemValidation";
 
 export function Items({ items }: { items: string[] }) {
   const [inputValue, setInputValue] = useState("");
@@ -37,8 +38,8 @@ export function Items({ items }: { items: string[] }) {
   }, []);
 
   function handleSubmit() {
-    const value = inputValue.trim();
-    if (!value) return;
+    const value = normalizeItemInput(inputValue);
+    if (!isValidNormalizedItem(value)) return;
 
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
