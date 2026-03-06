@@ -38,6 +38,7 @@ export function Items({ items }: { items: string[] }) {
   }, []);
 
   function handleSubmit() {
+    trigger("success")
     const value = normalizeItemInput(inputValue);
     if (!isValidNormalizedItem(value)) return;
 
@@ -80,7 +81,7 @@ export function Items({ items }: { items: string[] }) {
             variant="neutral"
             size="xl"
             onClick={() => {
-              trigger();
+              trigger("success");
               startTransition(() => {
                 updateOptimisticItems({ payload: item, type: "delete" });
                 removeItem(item);
