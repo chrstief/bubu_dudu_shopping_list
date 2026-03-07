@@ -1,6 +1,6 @@
 "use client";
 
-import { EmojiParticlesProvider } from "@/components/emoji-particles";
+import { EmojiParticlesProvider } from "@/components/emoji-particles/emoji-particles";
 
 export function ClientProviders({
   children,

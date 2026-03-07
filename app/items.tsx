@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useWebHaptics } from "web-haptics/react";
 import { foodEmojis, getRandomFoodEmoji } from "./foodEmojis";
 import { isValidNormalizedItem, normalizeItemInput } from "@/lib/itemValidation";
-import { useEmojiParticles } from "@/components/emoji-particles";
+import { useEmojiParticles } from "@/components/emoji-particles/emoji-particles";
 
 export function Items({ items }: { items: string[] }) {
   const [inputValue, setInputValue] = useState("");
