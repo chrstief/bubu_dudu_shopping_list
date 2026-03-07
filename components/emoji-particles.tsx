@@ -10,17 +10,10 @@ import {
 
 import styles from "./emoji-particles.module.css";
 
-export type EmojiOption = { emoji: string; canFlip: boolean };
+export type EmojiList = string[];
 
 type EmojiParticlesContextValue = {
-  create: (
-    x: number,
-    y: number,
-    emojis?: EmojiOption[],
-    duration?: number,
-    gx?: number,
-    gy?: number,
-  ) => void;
+  confetti: (emojis?: EmojiList) => void;
 };
 
 type Particle = {
@@ -48,10 +41,8 @@ const EmojiParticlesContext = createContext<EmojiParticlesContextValue | null>(
 const MAX_ACTIVE = 500;
 const ANIM_FRAMES = 120;
 const MAX_DPR = 2;
-const DEFAULT_EMOJIS: EmojiOption[] = [
-  { emoji: "✨", canFlip: false },
-  { emoji: "🔥", canFlip: false },
-];
+const DEFAULT_EMOJIS: EmojiList = ["✨", "🔥"];
+const FLIPPABLE_EMOJIS = new Set(["🎉", "👍", "👎", "👈", "👉", "👋", "🤌"]);
 
 const emojiCache = new Map<string, HTMLCanvasElement>();
 
@@ -170,7 +161,7 @@ function spawnBurst(
   particles: Particle[],
   x: number,
   y: number,
-  emojis: EmojiOption[],
+  emojis: EmojiList,
   gx: number,
   gy: number,
 ) {
@@ -192,8 +183,8 @@ function spawnBurst(
       opacity: 1,
       life: ANIM_FRAMES,
       maxLife: ANIM_FRAMES,
-      emoji: pick?.emoji || "✨",
-      flipH: pick?.canFlip ? Math.random() < 0.5 : false,
+      emoji: pick || "✨",
+      flipH: pick ? FLIPPABLE_EMOJIS.has(pick) && Math.random() < 0.5 : false,
       fontSize: 20 + Math.ceil(Math.random() * 40),
       radius: 0,
       gx,
@@ -211,6 +202,8 @@ export function EmojiParticlesProvider({
   const particlesRef = useRef<Particle[]>([]);
   const rafIdRef = useRef<number | null>(null);
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
+  const lastPointerRef = useRef<{ x: number; y: number } | null>(null);
+  const lastTargetRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -220,7 +213,18 @@ export function EmojiParticlesProvider({
     resizeCanvas(canvas);
 
     const onResize = () => resizeCanvas(canvas);
+    const updateOrigin = (event: PointerEvent) => {
+      lastPointerRef.current = {
+        x: event.clientX,
+        y: event.clientY,
+      };
+
+      lastTargetRef.current =
+        event.target instanceof HTMLElement ? event.target : null;
+    };
+
     window.addEventListener("resize", onResize);
+    window.addEventListener("pointerdown", updateOrigin, true);
 
     return () => {
       if (rafIdRef.current !== null) {
@@ -229,8 +233,22 @@ export function EmojiParticlesProvider({
       }
 
       window.removeEventListener("resize", onResize);
+      window.removeEventListener("pointerdown", updateOrigin, true);
     };
   }, []);
+
+  function getOrigin() {
+    const target = lastTargetRef.current;
+    if (target) {
+      const rect = target.getBoundingClientRect();
+      return {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2,
+      };
+    }
+
+    return lastPointerRef.current;
+  }
 
   function startLoop() {
     if (rafIdRef.current !== null) return;
@@ -305,32 +323,17 @@ export function EmojiParticlesProvider({
     rafIdRef.current = requestAnimationFrame(frame);
   }
 
-  function create(
-    x: number,
-    y: number,
-    emojis: EmojiOption[] = DEFAULT_EMOJIS,
-    duration?: number,
-    gx: number = 0,
-    gy: number = -1.5,
-  ) {
+  function confetti(emojis: EmojiList = DEFAULT_EMOJIS) {
+    const origin = getOrigin();
+    if (!origin) return;
+
     const particles = particlesRef.current;
-    spawnBurst(particles, x, y, emojis, gx, gy);
+    spawnBurst(particles, origin.x, origin.y, emojis, 0, -1.5);
     startLoop();
-
-    if (!duration || duration <= 0) return;
-
-    const interval = 150;
-    const count = Math.floor(duration / interval);
-    for (let i = 1; i <= count; i++) {
-      window.setTimeout(() => {
-        spawnBurst(particles, x, y, emojis, gx, gy);
-        startLoop();
-      }, i * interval);
-    }
   }
 
   return (
-    <EmojiParticlesContext.Provider value={{ create }}>
+    <EmojiParticlesContext.Provider value={{ confetti }}>
       {children}
       <canvas ref={canvasRef} className={styles.particles} />
     </EmojiParticlesContext.Provider>

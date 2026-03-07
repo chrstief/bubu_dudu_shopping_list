@@ -6,30 +6,13 @@ import { Button } from "@/components/ui/button";
 import { useWebHaptics } from "web-haptics/react";
 import { foodEmojis, getRandomFoodEmoji } from "./foodEmojis";
 import { isValidNormalizedItem, normalizeItemInput } from "@/lib/itemValidation";
-import {
-  useEmojiParticles,
-  type EmojiOption,
-} from "@/components/emoji-particles";
-
-const successEmojis: EmojiOption[] = [
-  { emoji: "✅", canFlip: false },
-  { emoji: "✅", canFlip: false },
-  { emoji: "✅", canFlip: false },
-  { emoji: "🎉", canFlip: true },
-  { emoji: "🎉", canFlip: true },
-  { emoji: "🤝", canFlip: false },
-  { emoji: "💚", canFlip: false },
-  { emoji: "💚", canFlip: false },
-  { emoji: "👍", canFlip: true },
-  { emoji: "👍", canFlip: true },
-  { emoji: "👍", canFlip: true },
-];
+import { useEmojiParticles } from "@/components/emoji-particles";
 
 export function Items({ items }: { items: string[] }) {
   const [inputValue, setInputValue] = useState("");
   const [placeholderEmoji, setPlaceholderEmoji] = useState(foodEmojis[0]);
   const { trigger } = useWebHaptics();
-  const { create } = useEmojiParticles();
+  const { confetti } = useEmojiParticles();
   const [, startTransition] = useTransition();
   const itemListRef = useRef<HTMLDivElement>(null);
   const [optimisticItems, updateOptimisticItems] = useOptimistic(
@@ -57,23 +40,6 @@ export function Items({ items }: { items: string[] }) {
     return () => clearInterval(intervalId);
   }, []);
 
-  function getBurstPosition(button: HTMLElement | null) {
-    if (!button) return null;
-
-    const rect = button.getBoundingClientRect();
-    return {
-      x: rect.left + rect.width / 2,
-      y: rect.top + rect.height / 2,
-    };
-  }
-
-  function createBurstFromButton(button: HTMLElement | null) {
-    const burstPosition = getBurstPosition(button);
-    if (!burstPosition) return;
-
-    create(burstPosition.x, burstPosition.y, successEmojis);
-  }
-
   function getItemButton(item: string) {
     if (!itemListRef.current) return null;
 
@@ -96,10 +62,6 @@ export function Items({ items }: { items: string[] }) {
     startTransition(() => {
       updateOptimisticItems({ payload: value, type: "add" });
       addItem(value);
-    });
-
-    requestAnimationFrame(() => {
-      createBurstFromButton(getItemButton(value));
     });
   }
 
@@ -135,9 +97,9 @@ export function Items({ items }: { items: string[] }) {
             variant="neutral"
             size="xl"
             data-item-value={item}
-            onClick={(e) => {
+            onClick={() => {
               trigger("success");
-              createBurstFromButton(e.currentTarget);
+              confetti(["✅", "🎉", "🤝", "💚", "👍"])
               startTransition(() => {
                 updateOptimisticItems({ payload: item, type: "delete" });
                 removeItem(item);
