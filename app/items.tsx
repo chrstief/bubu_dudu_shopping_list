@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useOptimistic, useRef, useState, useTransition } from "react";
+import { useEffect, useOptimistic, useState, useTransition } from "react";
 import { addItem, removeItem } from "./actions";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,6 @@ export function Items({ items }: { items: string[] }) {
   const { trigger } = useWebHaptics();
   const { confetti } = useEmojiParticles();
   const [, startTransition] = useTransition();
-  const itemListRef = useRef<HTMLDivElement>(null);
   const [optimisticItems, updateOptimisticItems] = useOptimistic(
     items,
     (previous, action: { payload: string; type: "add" | "delete" }) => {
@@ -40,19 +39,10 @@ export function Items({ items }: { items: string[] }) {
     return () => clearInterval(intervalId);
   }, []);
 
-  function getItemButton(item: string) {
-    if (!itemListRef.current) return null;
-
-    return itemListRef.current.querySelector<HTMLElement>(
-      `[data-item-value=${JSON.stringify(item)}]`,
-    );
-  }
-
   function handleSubmit() {
+    trigger("success");
     const value = normalizeItemInput(inputValue);
     if (!isValidNormalizedItem(value)) return;
-
-    trigger("success");
 
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
@@ -81,22 +71,17 @@ export function Items({ items }: { items: string[] }) {
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
         />
-        <Button
-          type="submit"
-          size="xl"
-          className="w-full"
-        >
+        <Button type="submit" size="xl" className="w-full">
           Add to cart
         </Button>
       </form>
-      <div ref={itemListRef} className="flex gap-5 flex-wrap">
+      <div className="flex gap-5 flex-wrap">
         {optimisticItems.map((item) => (
           <Button
             key={item}
             className="grow"
             variant="neutral"
             size="xl"
-            data-item-value={item}
             onClick={() => {
               trigger("success");
               confetti(["✅", "🎉", "🤝", "💚", "👍"])
