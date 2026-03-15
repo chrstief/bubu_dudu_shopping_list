@@ -13,7 +13,7 @@ import styles from "./emoji-particles.module.css";
 export type EmojiList = string[];
 
 type EmojiParticlesContextValue = {
-  confetti: (emojis?: EmojiList) => void;
+  confetti: (emojis?: EmojiList, duration?: number) => void;
 };
 
 type Particle = {
@@ -204,6 +204,7 @@ export function EmojiParticlesProvider({
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
   const lastPointerRef = useRef<{ x: number; y: number } | null>(null);
   const lastTargetRef = useRef<HTMLElement | null>(null);
+  const timeoutIdsRef = useRef<number[]>([]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -227,6 +228,11 @@ export function EmojiParticlesProvider({
     window.addEventListener("pointerdown", updateOrigin, true);
 
     return () => {
+      for (const timeoutId of timeoutIdsRef.current) {
+        window.clearTimeout(timeoutId);
+      }
+      timeoutIdsRef.current = [];
+
       if (rafIdRef.current !== null) {
         cancelAnimationFrame(rafIdRef.current);
         rafIdRef.current = null;
@@ -323,13 +329,27 @@ export function EmojiParticlesProvider({
     rafIdRef.current = requestAnimationFrame(frame);
   }
 
-  function confetti(emojis: EmojiList = DEFAULT_EMOJIS) {
+  function confetti(emojis: EmojiList = DEFAULT_EMOJIS, duration?: number) {
     const origin = getOrigin();
     if (!origin) return;
 
     const particles = particlesRef.current;
     spawnBurst(particles, origin.x, origin.y, emojis, 0, -1.5);
     startLoop();
+
+    if (duration && duration > 0) {
+      const interval = 150;
+      const count = Math.floor(duration / interval);
+
+      for (let i = 1; i <= count; i++) {
+        const timeoutId = window.setTimeout(() => {
+          spawnBurst(particlesRef.current, origin.x, origin.y, emojis, 0, -1.5);
+          startLoop();
+        }, i * interval);
+
+        timeoutIdsRef.current.push(timeoutId);
+      }
+    }
   }
 
   return (

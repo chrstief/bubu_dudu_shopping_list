@@ -86,9 +86,13 @@ export function Items({ items }: { items: string[] }) {
             size="xl"
             onClick={() => {
               const isLastItem = optimisticItems.length === 1;
-
-              trigger(isLastItem ? defaultPatterns.buzz : defaultPatterns.success);
-              confetti(["✅", "🎉", "🤝", "💚", "👍"]);
+              if (isLastItem) {
+                trigger(defaultPatterns.buzz);
+                confetti(foodEmojis, 1000);
+              } else {
+                trigger(defaultPatterns.success);
+                confetti(["✅", "🎉", "🤝", "💚", "👍"]);
+              }
               startTransition(() => {
                 updateOptimisticItems({ payload: item, type: "delete" });
                 removeItem(item);
