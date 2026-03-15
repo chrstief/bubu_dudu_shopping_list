@@ -3,6 +3,7 @@ import { useEffect, useOptimistic, useState, useTransition } from "react";
 import { addItem, removeItem } from "./actions";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { defaultPatterns } from "web-haptics";
 import { useWebHaptics } from "web-haptics/react";
 import { foodEmojis, getRandomFoodEmoji } from "./foodEmojis";
 import { isValidNormalizedItem, normalizeItemInput } from "@/lib/itemValidation";
@@ -41,7 +42,7 @@ export function Items({ items }: { items: string[] }) {
 
   function handleSubmit() {
     confetti(foodEmojis)
-    trigger("success");
+    trigger(defaultPatterns.success);
     const value = normalizeItemInput(inputValue);
     if (!isValidNormalizedItem(value)) return;
 
@@ -84,8 +85,10 @@ export function Items({ items }: { items: string[] }) {
             variant="neutral"
             size="xl"
             onClick={() => {
-              trigger("success");
-              confetti(["✅", "🎉", "🤝", "💚", "👍"])
+              const isLastItem = optimisticItems.length === 1;
+
+              trigger(isLastItem ? defaultPatterns.buzz : defaultPatterns.success);
+              confetti(["✅", "🎉", "🤝", "💚", "👍"]);
               startTransition(() => {
                 updateOptimisticItems({ payload: item, type: "delete" });
                 removeItem(item);
