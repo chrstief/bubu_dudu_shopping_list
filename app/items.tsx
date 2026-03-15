@@ -40,6 +40,7 @@ export function Items({ items }: { items: string[] }) {
   }, []);
 
   function handleSubmit() {
+    confetti(foodEmojis)
     trigger("success");
     const value = normalizeItemInput(inputValue);
     if (!isValidNormalizedItem(value)) return;
